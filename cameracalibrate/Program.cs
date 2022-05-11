@@ -16,8 +16,8 @@ namespace CameraCalibration
             var corners= new Mat();
             var corner = new Point2f();
             var flags = new ChessboardFlags();
-            Cv2.FindChessboardCorners(gray, new Size(6, 6), corners,flags);
-            if(flags)
+            var isfind = Cv2.FindChessboardCorners(gray, new Size(6, 6), corners,flags);
+            if(isfind)
             {
 
             }
