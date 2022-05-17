@@ -11,17 +11,19 @@ namespace CameraCalibration
             var img = Cv2.ImRead(imgPath);
             Cv2.ImShow("sumple", img);
             
-            var criteria = new TermCriteria(CriteriaTypes.Eps, 30, 0.001);
+            
             var gray = new Mat();
             Cv2.CvtColor(img, gray, ColorConversionCodes.BGR2GRAY);
-            var corners= new Mat();
+            var corner= new Mat();
+            var corners = new List<Mat>();
             
             var flags = new ChessboardFlags();
             //キャリブレーションボードに合わせてちゃんとサイズ(交差点？の数)を合わせよう！！ピッタリじゃないと検出できない
-            var isfind = Cv2.FindChessboardCorners(gray, new Size(7, 10), corners,flags);
+            var isfind = Cv2.FindChessboardCorners(gray, new Size(7, 10), corner,flags);
             if(isfind)
             {
-                Cv2.DrawChessboardCorners(gray, new Size(6, 6), corners, isfind);
+                Cv2.DrawChessboardCorners(gray, new Size(7, 10), corner, isfind);
+                corners.Add(corner);
                 Cv2.ImShow("output", gray);
             }
             else
@@ -29,6 +31,11 @@ namespace CameraCalibration
                 Console.WriteLine("failed to find corners");
             }
             Cv2.WaitKey(0);
+        }
+
+        public string MakeImagePath()
+        {
+
         }
     }
 }
