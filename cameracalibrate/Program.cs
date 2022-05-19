@@ -33,9 +33,5 @@ namespace CameraCalibration
             Cv2.WaitKey(0);
         }
 
-        public string MakeImagePath()
-        {
-
-        }
     }
 }
