@@ -9,11 +9,25 @@ namespace CameraCalibration
         {
             Program program = new();
             bool isExistImg = true;
-            int i = 1;
+            int num = 1;
             var corners = new List<Mat>();
+            var patternSize = new Size(7, 7);
+            var objPoints=new List<Mat>();
+            var rectangleSize = new Size(21f, 21f);
+            var objPoint = new List<Point3d>();
+            for(int i=0;i<patternSize.Height;i++)
+            {
+                for(int j=0;j<patternSize.Width;j++)
+                {
+                    var p = new Point3d(j * rectangleSize.Width, i * rectangleSize.Height, 0f);
+                    objPoint.Add(p);
+                    Console.Write(p);
+                }
+                Console.WriteLine();
+            }
             while (isExistImg)
             {
-                var imgPath = program.MakeImagePath(i);
+                var imgPath = program.MakeImagePath(num);
                 var img = Cv2.ImRead(imgPath);
                 //Cv2.ImShow("sumple", img);
                 Console.WriteLine(imgPath);
@@ -26,7 +40,7 @@ namespace CameraCalibration
 
                 var flags = new ChessboardFlags();
                 //キャリブレーションボードに合わせてちゃんとサイズ(交差点？の数)を合わせよう！！ピッタリじゃないと検出できない
-                var isfind = Cv2.FindChessboardCorners(gray, new Size(6, 8), corner, flags);
+                var isfind = Cv2.FindChessboardCorners(gray, patternSize, corner, flags);
                 if (isfind)
                 {
                     //Cv2.DrawChessboardCorners(gray, new Size(7, 10), corner, isfind);
@@ -38,17 +52,17 @@ namespace CameraCalibration
                 {
                     Console.WriteLine("failed to find corners\n");
                 }
-                i++;
+                num++;
             }
         }
 
         public string MakeImagePath(int num)
         {
             var a = num / 100;
-            var b = num / 10;
+            var b = (num % 100) / 10;
             var c = num % 10;
-            var imgname = "cb" + a + b + c+".jpg";
-            var imgpath = @"D:\picture\chessboardresize\" + imgname;
+            var imgname = "cb2nd" + a + b + c+".jpg";
+            var imgpath = @"D:\picture\cbresize2\" + imgname;
             return imgpath;
         }
 
