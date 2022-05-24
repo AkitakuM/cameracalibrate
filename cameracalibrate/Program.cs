@@ -21,9 +21,9 @@ namespace CameraCalibration
                 {
                     var p = new Point3d(j * rectangleSize.Width, i * rectangleSize.Height, 0f);
                     objPoint.Add(p);
-                    Console.Write(p);
+                    //Console.Write(p);//debug
                 }
-                Console.WriteLine();
+                //Console.WriteLine();//debug
             }
             while (isExistImg)
             {
