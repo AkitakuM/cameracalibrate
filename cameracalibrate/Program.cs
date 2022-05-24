@@ -54,6 +54,11 @@ namespace CameraCalibration
                 }
                 num++;
             }
+            var cameraMatrix = new double[3, 3];
+            var distCoeffs = new double[8];
+            Vec3d[] rvecs, tvecs;
+
+            Cv2.CalibrateCamera(objPoint, corners, new Size(626,352), cameraMatrix, distCoeffs, out rvecs, out tvecs);
         }
 
         public string MakeImagePath(int num)
