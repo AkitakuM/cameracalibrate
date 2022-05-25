@@ -12,9 +12,11 @@ namespace CameraCalibration
             int num = 1;
             var corners = new List<Mat>();
             var patternSize = new Size(7, 7);
-            var objPoints=new List<Mat>();
+            var objPoints=new List<List<Point3d>>();
             var rectangleSize = new Size(21f, 21f);
             var objPoint = new List<Point3d>();
+            var imgSize = new Size();
+            bool isExistImgSize = false;
             for(int i=0;i<patternSize.Height;i++)
             {
                 for(int j=0;j<patternSize.Width;j++)
@@ -46,6 +48,12 @@ namespace CameraCalibration
                     //Cv2.DrawChessboardCorners(gray, new Size(7, 10), corner, isfind);
                     corners.Add(corner);
                     //Cv2.ImShow("output", gray);
+                    objPoints.Add(objPoint);
+                    if(isExistImgSize==false)
+                    {
+                        imgSize = img.Size;
+                        isExistImgSize = true;
+                    }
                     Console.WriteLine("succeed to find corners!!!!!\n");
                 }
                 else
@@ -58,7 +66,7 @@ namespace CameraCalibration
             var distCoeffs = new double[8];
             Vec3d[] rvecs, tvecs;
 
-            Cv2.CalibrateCamera(objPoint, corners, new Size(626,352), cameraMatrix, distCoeffs, out rvecs, out tvecs);
+            Cv2.CalibrateCamera(objPoints, corners, imgSize, cameraMatrix, distCoeffs, out rvecs, out tvecs);
         }
 
         public string MakeImagePath(int num)
