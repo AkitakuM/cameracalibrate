@@ -10,18 +10,19 @@ namespace CameraCalibration
             Program program = new();
             bool isExistImg = true;
             int num = 1;
-            var corners = new List<Mat>();
             var patternSize = new Size(7, 7);
-            var objPoints=new List<List<Point3d>>();
+            var corners = new List<List<Point2f>>();
+            
+            var objPoints=new List<List<Point3f>>();
             var rectangleSize = new Size(21f, 21f);
-            var objPoint = new List<Point3d>();
+            var objPoint = new List<Point3f>();
             var imgSize = new Size();
             bool isExistImgSize = false;
             for(int i=0;i<patternSize.Height;i++)
             {
                 for(int j=0;j<patternSize.Width;j++)
                 {
-                    var p = new Point3d(j * rectangleSize.Width, i * rectangleSize.Height, 0f);
+                    var p = new Point3f(j * rectangleSize.Width, i * rectangleSize.Height, 0f);
                     objPoint.Add(p);
                     //Console.Write(p);//debug
                 }
@@ -37,21 +38,21 @@ namespace CameraCalibration
                         
                 var gray = new Mat();
                 Cv2.CvtColor(img, gray, ColorConversionCodes.BGR2GRAY);
-                var corner = new Mat();
+
                 
 
                 var flags = new ChessboardFlags();
                 //キャリブレーションボードに合わせてちゃんとサイズ(交差点？の数)を合わせよう！！ピッタリじゃないと検出できない
-                var isfind = Cv2.FindChessboardCorners(gray, patternSize, corner, flags);
+                var isfind = Cv2.FindChessboardCorners(gray, patternSize, out var corner, flags);
                 if (isfind)
                 {
                     //Cv2.DrawChessboardCorners(gray, new Size(7, 10), corner, isfind);
-                    corners.Add(corner);
+                    corners.Add( corner.ToList());
                     //Cv2.ImShow("output", gray);
                     objPoints.Add(objPoint);
                     if(isExistImgSize==false)
                     {
-                        imgSize = img.Size;
+                        imgSize = img.Size();
                         isExistImgSize = true;
                     }
                     Console.WriteLine("succeed to find corners!!!!!\n");
@@ -62,11 +63,14 @@ namespace CameraCalibration
                 }
                 num++;
             }
+
             var cameraMatrix = new double[3, 3];
             var distCoeffs = new double[8];
             Vec3d[] rvecs, tvecs;
 
             Cv2.CalibrateCamera(objPoints, corners, imgSize, cameraMatrix, distCoeffs, out rvecs, out tvecs);
+
+
         }
 
         public string MakeImagePath(int num)
