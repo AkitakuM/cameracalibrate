@@ -32,9 +32,10 @@ namespace CameraCalibration
             {
                 var imgPath = program.MakeImagePath(num);
                 var img = Cv2.ImRead(imgPath);
+                if (img.Empty()) break;
                 //Cv2.ImShow("sumple", img);
                 Console.WriteLine(imgPath);
-                if (img.Empty()) break;
+                
                         
                 var gray = new Mat();
                 Cv2.CvtColor(img, gray, ColorConversionCodes.BGR2GRAY);
