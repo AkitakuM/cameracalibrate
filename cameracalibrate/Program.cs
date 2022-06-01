@@ -70,7 +70,11 @@ namespace CameraCalibration
 
             Cv2.CalibrateCamera(objPoints, corners, imgSize, cameraMatrix, distCoeffs, out rvecs, out tvecs);
 
+            var optimalCameraMatrix = new double[3, 3];
+            double alpha = 1;
 
+
+            optimalCameraMatrix = Cv2.GetOptimalNewCameraMatrix(cameraMatrix, distCoeffs, imgSize, alpha, imgSize, out var validPixROI);
         }
 
         public string MakeImagePath(int num)
