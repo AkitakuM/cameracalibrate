@@ -31,8 +31,10 @@ namespace CameraCalibration
             while (isExistImg)
             {
                 var imgPath = program.MakeImagePath(num);
+                isExistImg=File.Exists(imgPath);
+                if (isExistImg==false) break;
                 var img = Cv2.ImRead(imgPath);
-                if (img.Empty()) break;
+                
                 //Cv2.ImShow("sumple", img);
                 Console.WriteLine(imgPath);
                 
@@ -64,21 +66,23 @@ namespace CameraCalibration
                 }
                 num++;
             }
-
+            Console.WriteLine("corner find finished!!");
             var cameraMatrix = new double[3, 3];
             var distCoeffs = new double[8];
             Vec3d[] rvecs, tvecs;
 
+            
+            
             Cv2.CalibrateCamera(objPoints, corners, imgSize, cameraMatrix, distCoeffs, out rvecs, out tvecs);
 
-            
+            //なんかここで処理が止まる
 
             var optimalCameraMatrix = new double[3, 3];
             double alpha = 1;
 
 
             optimalCameraMatrix = Cv2.GetOptimalNewCameraMatrix(cameraMatrix, distCoeffs, imgSize, alpha, imgSize, out var validPixROI);
-
+            Console.WriteLine("aaaa");
             Console.WriteLine("cammtx={0},optcammat={1}", cameraMatrix,optimalCameraMatrix);
         }
 
@@ -88,7 +92,10 @@ namespace CameraCalibration
             var b = (num % 100) / 10;
             var c = num % 10;
             var imgname = "cb2nd" + a + b + c+".jpg";
-            var imgpath = @"D:\picture\cbresize2\" + imgname;
+            //学校で作業するとき用
+            //var imgpath = @"D:\picture\cbresize2\" + imgname;
+            //家で作業するとき用
+            var imgpath = @"D:\pictureforstudy\cbresize2\" + imgname;
             return imgpath;
         }
 
