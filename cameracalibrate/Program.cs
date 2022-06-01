@@ -73,7 +73,7 @@ namespace CameraCalibration
 
             
             
-            Cv2.CalibrateCamera(objPoints, corners, imgSize, cameraMatrix, distCoeffs, out rvecs, out tvecs);
+            var hoge = Cv2.CalibrateCamera(objPoints, corners, imgSize, cameraMatrix, distCoeffs, out rvecs, out tvecs);
 
             //なんかここで処理が止まる
 
@@ -82,8 +82,20 @@ namespace CameraCalibration
 
 
             optimalCameraMatrix = Cv2.GetOptimalNewCameraMatrix(cameraMatrix, distCoeffs, imgSize, alpha, imgSize, out var validPixROI);
-            Console.WriteLine("aaaa");
-            Console.WriteLine("cammtx={0},optcammat={1}", cameraMatrix,optimalCameraMatrix);
+            Console.WriteLine("optcammat");
+            for(int i=0;i<3;i++)
+            {
+                for(int j=0;j<3;j++)
+                {
+                    Console.WriteLine("{0},{1}:{2}", i, j, optimalCameraMatrix[i, j]);
+                }
+            }
+
+            var src = new Mat();
+            var srcPath = program.MakeImagePath(1);
+            src = Cv2.ImRead(srcPath);
+            var dst = new Mat();
+            Cv2.Undistort(src, dst, cameraMatrix, distCoeffs, optimalCameraMatrix);
         }
 
         public string MakeImagePath(int num)
