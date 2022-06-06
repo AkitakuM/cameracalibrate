@@ -24,9 +24,9 @@ namespace CameraCalibration
                 {
                     var p = new Point3f(j * rectangleSize.Width, i * rectangleSize.Height, 0f);
                     objPoint.Add(p);
-                    //Console.Write(p);//debug
+                    Console.Write(p);//debug
                 }
-                //Console.WriteLine();//debug
+                Console.WriteLine();//debug
             }
             while (isExistImg)
             {
@@ -46,7 +46,8 @@ namespace CameraCalibration
 
                 var flags = new ChessboardFlags();
                 //キャリブレーションボードに合わせてちゃんとサイズ(交差点？の数)を合わせよう！！ピッタリじゃないと検出できない
-                var isfind = Cv2.FindChessboardCorners(gray, patternSize, out var corner, flags);
+                var corner = new List<Point2f>(); 
+                var isfind = Cv2.FindChessboardCorners(gray, patternSize, OutputArray.Create(corner), flags);
                 if (isfind)
                 {
                     //Cv2.DrawChessboardCorners(gray, new Size(7, 10), corner, isfind);
@@ -57,6 +58,10 @@ namespace CameraCalibration
                     {
                         imgSize = img.Size();
                         isExistImgSize = true;
+                    }
+                    foreach (var p in corner)
+                    {
+                        Console.WriteLine(p);
                     }
                     Console.WriteLine("succeed to find corners!!!!!\n");
                 }
@@ -73,7 +78,7 @@ namespace CameraCalibration
 
             
             
-            var hoge = Cv2.CalibrateCamera(objPoints, corners, imgSize, cameraMatrix, distCoeffs, out rvecs, out tvecs);
+            Cv2.CalibrateCamera(objPoints, corners, imgSize, cameraMatrix, distCoeffs, out rvecs, out tvecs);
 
             //なんかここで処理が止まる
 
@@ -87,15 +92,24 @@ namespace CameraCalibration
             {
                 for(int j=0;j<3;j++)
                 {
-                    Console.WriteLine("{0},{1}:{2}", i, j, optimalCameraMatrix[i, j]);
+                    Console.WriteLine("({0},{1}):{2}", i, j, optimalCameraMatrix[i, j]);
                 }
+            }
+            Console.WriteLine("distcoeffs");
+            int index = 1;
+            foreach(var d in distCoeffs)
+            {
+                Console.WriteLine("{0}={1}",index,d);
+                index++;
             }
 
             var src = new Mat();
             var srcPath = program.MakeImagePath(1);
             src = Cv2.ImRead(srcPath);
             var dst = new Mat();
-            Cv2.Undistort(src, dst, cameraMatrix, distCoeffs, optimalCameraMatrix);
+            Cv2.Undistort(src, dst, InputArray.Create(cameraMatrix), InputArray.Create(distCoeffs),InputArray.Create(optimalCameraMatrix));
+            Cv2.ImShow("calibrated", dst);
+            Cv2.WaitKey(0);
         }
 
         public string MakeImagePath(int num)
@@ -105,9 +119,9 @@ namespace CameraCalibration
             var c = num % 10;
             var imgname = "cb2nd" + a + b + c+".jpg";
             //学校で作業するとき用
-            //var imgpath = @"D:\picture\cbresize2\" + imgname;
+            var imgpath = @"D:\picture\cbresize2\" + imgname;
             //家で作業するとき用
-            var imgpath = @"D:\pictureforstudy\cbresize2\" + imgname;
+            //var imgpath = @"D:\pictureforstudy\cbresize2\" + imgname;
             return imgpath;
         }
 
