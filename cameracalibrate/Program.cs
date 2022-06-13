@@ -59,10 +59,6 @@ namespace CameraCalibration
                         imgSize = img.Size();
                         isExistImgSize = true;
                     }
-                    foreach (var p in corner)
-                    {
-                        Console.WriteLine(p);
-                    }
                     Console.WriteLine("succeed to find corners!!!!!\n");
                 }
                 else
@@ -73,41 +69,48 @@ namespace CameraCalibration
             }
             Console.WriteLine("corner find finished!!");
             var cameraMatrix = new double[3, 3];
-            var distCoeffs = new double[8];
+            var distCoeffs = new double[5];
             Vec3d[] rvecs, tvecs;
 
-            
+            foreach(var c in corners)
+            {
+                foreach(var p in c)
+                {
+                    Console.WriteLine(p);
+                }
+            }
             
             Cv2.CalibrateCamera(objPoints, corners, imgSize, cameraMatrix, distCoeffs, out rvecs, out tvecs);
 
             //なんかここで処理が止まる
+            int index = 1;
+            foreach (var d in distCoeffs)
+            {
+                Console.WriteLine("{0}={1}", index, d);
+                index++;
+            }
 
             var optimalCameraMatrix = new double[3, 3];
             double alpha = 1;
 
 
-            optimalCameraMatrix = Cv2.GetOptimalNewCameraMatrix(cameraMatrix, distCoeffs, imgSize, alpha, imgSize, out var validPixROI);
-            Console.WriteLine("optcammat");
-            for(int i=0;i<3;i++)
-            {
-                for(int j=0;j<3;j++)
-                {
-                    Console.WriteLine("({0},{1}):{2}", i, j, optimalCameraMatrix[i, j]);
-                }
-            }
-            Console.WriteLine("distcoeffs");
-            int index = 1;
-            foreach(var d in distCoeffs)
-            {
-                Console.WriteLine("{0}={1}",index,d);
-                index++;
-            }
+            //optimalCameraMatrix = Cv2.GetOptimalNewCameraMatrix(cameraMatrix, distCoeffs, imgSize, alpha, imgSize, out var validPixROI);
+            //Console.WriteLine("optcammat");
+            //for(int i=0;i<3;i++)
+            //{
+            //    for(int j=0;j<3;j++)
+            //    {
+            //        Console.WriteLine("({0},{1}):{2}", i, j, optimalCameraMatrix[i, j]);
+            //    }
+            //}
+            //Console.WriteLine("distcoeffs");
+            
 
             var src = new Mat();
             var srcPath = program.MakeImagePath(1);
             src = Cv2.ImRead(srcPath);
             var dst = new Mat();
-            Cv2.Undistort(src, dst, InputArray.Create(cameraMatrix), InputArray.Create(distCoeffs),InputArray.Create(optimalCameraMatrix));
+            Cv2.Undistort(src, dst, InputArray.Create(cameraMatrix), InputArray.Create(distCoeffs));
             Cv2.ImShow("calibrated", dst);
             Cv2.WaitKey(0);
         }
