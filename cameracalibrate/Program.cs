@@ -15,19 +15,11 @@ namespace CameraCalibration
             
             var objPoints=new List<List<Point3f>>();
             var rectangleSize = new Size(21f, 21f);
-            var objPoint = new List<Point3f>();
             var imgSize = new Size();
             bool isExistImgSize = false;
-            for(int i=0;i<patternSize.Height;i++)
-            {
-                for(int j=0;j<patternSize.Width;j++)
-                {
-                    var p = new Point3f(j * rectangleSize.Width, i * rectangleSize.Height, 0f);
-                    objPoint.Add(p);
-                    Console.Write(p);//debug
-                }
-                Console.WriteLine();//debug
-            }
+
+            var objPoint = program.MakeObjPoint(patternSize, rectangleSize);
+            
             while (isExistImg)
             {
                 var imgPath = program.MakeImagePath(num);
@@ -126,6 +118,22 @@ namespace CameraCalibration
             //家で作業するとき用
             //var imgpath = @"D:\pictureforstudy\cbresize2\" + imgname;
             return imgpath;
+        }
+
+        public List<Point3f> MakeObjPoint(Size patternSize,Size rectSize)
+        {
+            var objPoint = new List<Point3f>();
+            for (int i = 0; i < patternSize.Height; i++)
+            {
+                for (int j = 0; j < patternSize.Width; j++)
+                {
+                    var p = new Point3f(j * rectSize.Width, i * rectSize.Height, 0f);
+                    objPoint.Add(p);
+                    Console.Write(p);//debug
+                }
+                Console.WriteLine();//debug
+            }
+            return objPoint;
         }
 
         public Mat findcorner(Size size, Mat img)
