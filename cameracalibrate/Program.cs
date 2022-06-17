@@ -1,5 +1,6 @@
 ﻿using System;
 using OpenCvSharp;
+using System.IO;
 
 namespace CameraCalibration
 {
@@ -35,7 +36,6 @@ namespace CameraCalibration
                 Cv2.CvtColor(img, gray, ColorConversionCodes.BGR2GRAY);
 
                 
-
                 var flags = new ChessboardFlags();
                 //キャリブレーションボードに合わせてちゃんとサイズ(交差点？の数)を合わせよう！！ピッタリじゃないと検出できない
                 var corner = new List<Point2f>(); 
@@ -96,7 +96,24 @@ namespace CameraCalibration
             //    }
             //}
             //Console.WriteLine("distcoeffs");
-            
+
+            var camMatFile = new List<string>();
+            for (int i= 0;i < 3;i++)
+            {
+                for(int j=0;j<3;j++)
+                {
+                    camMatFile.Add(cameraMatrix[i, j].ToString());
+                }
+            }
+
+            var distCoeffsFile = new List<string>();
+            for(int i=0;i<5;i++)
+            {
+                distCoeffsFile.Add(distCoeffs[i].ToString());
+            }
+
+            File.AppendAllLines(@"D:\cameracalibrate\cameraMatrix.txt", camMatFile, System.Text.Encoding.UTF32);
+            File.AppendAllLines(@"D:\cameracalibrate\distCoeffs.txt", distCoeffsFile, System.Text.Encoding.UTF32);
 
             var src = new Mat();
             var srcPath = program.MakeImagePath(1);
