@@ -2,7 +2,8 @@
 using OpenCvSharp;
 using System.IO;
 
-namespace CameraCalibration
+namespace MatrixCalcutlate
+
 {
     class Program
     {
