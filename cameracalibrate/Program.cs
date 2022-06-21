@@ -65,28 +65,28 @@ namespace MatrixCalcutlate
             var distCoeffs = new double[5];
             Vec3d[] rvecs, tvecs;
 
-            foreach(var c in corners)
-            {
-                foreach(var p in c)
-                {
-                    Console.WriteLine(p);
-                }
-            }
+            //debug
+            //foreach(var c in corners)
+            //{
+            //    foreach(var p in c)
+            //    {
+            //        Console.WriteLine(p);
+            //    }
+            //}
             
             Cv2.CalibrateCamera(objPoints, corners, imgSize, cameraMatrix, distCoeffs, out rvecs, out tvecs);
 
-            //なんかここで処理が止まる
-            int index = 1;
-            foreach (var d in distCoeffs)
-            {
-                Console.WriteLine("{0}={1}", index, d);
-                index++;
-            }
+            //debug
+            //int index = 1;
+            //foreach (var d in distCoeffs)
+            //{
+            //    Console.WriteLine("{0}={1}", index, d);
+            //    index++;
+            //}
 
-            var optimalCameraMatrix = new double[3, 3];
-            double alpha = 1;
-
-
+            //内部パラメータを改善してくれるらしいがうまくいかなかった
+            //var optimalCameraMatrix = new double[3, 3];
+            //double alpha = 1;
             //optimalCameraMatrix = Cv2.GetOptimalNewCameraMatrix(cameraMatrix, distCoeffs, imgSize, alpha, imgSize, out var validPixROI);
             //Console.WriteLine("optcammat");
             //for(int i=0;i<3;i++)
@@ -116,13 +116,14 @@ namespace MatrixCalcutlate
             File.AppendAllLines(@"D:\cameracalibrate\cameraMatrix.txt", camMatFile, System.Text.Encoding.UTF32);
             File.AppendAllLines(@"D:\cameracalibrate\distCoeffs.txt", distCoeffsFile, System.Text.Encoding.UTF32);
 
-            var src = new Mat();
-            var srcPath = program.MakeImagePath(1);
-            src = Cv2.ImRead(srcPath);
-            var dst = new Mat();
-            Cv2.Undistort(src, dst, InputArray.Create(cameraMatrix), InputArray.Create(distCoeffs));
-            Cv2.ImShow("calibrated", dst);
-            Cv2.WaitKey(0);
+            //debug
+            //var src = new Mat();
+            //var srcPath = program.MakeImagePath(1);
+            //src = Cv2.ImRead(srcPath);
+            //var dst = new Mat();
+            //Cv2.Undistort(src, dst, InputArray.Create(cameraMatrix), InputArray.Create(distCoeffs));
+            //Cv2.ImShow("calibrated", dst);
+            //Cv2.WaitKey(0);
         }
 
         public string MakeImagePath(int num)
@@ -154,25 +155,7 @@ namespace MatrixCalcutlate
             return objPoint;
         }
 
-        public Mat findcorner(Size size, Mat img)
-        {
-            var corner = new Mat();
-            var flags = new ChessboardFlags();
-            
-            var isfind = Cv2.FindChessboardCorners(img, size, corner, flags);
-            if (isfind)
-            {
-                Cv2.DrawChessboardCorners(img, size, corner, isfind);
-                Cv2.ImShow("output", img);
-            }
-            else
-            {
-                Console.WriteLine("failed to find corners");
-            }
-            Cv2.WaitKey(0);
-            return corner;
-
-        }
+       
     }
 
 }
