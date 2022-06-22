@@ -64,13 +64,13 @@ namespace CameraCalibration
             var distCoeffs = new double[5];
             Vec3d[] rvecs, tvecs;
 
-            foreach(var c in corners)
-            {
-                foreach(var p in c)
-                {
-                    Console.WriteLine(p);
-                }
-            }
+            //foreach(var c in corners)//debug
+            //{
+            //    foreach(var p in c)
+            //    {
+            //        Console.WriteLine(p);
+            //    }
+            //}
             
             Cv2.CalibrateCamera(objPoints, corners, imgSize, cameraMatrix, distCoeffs, out rvecs, out tvecs);
 
